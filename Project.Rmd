@@ -1,0 +1,110 @@
+---
+title: "Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(forecast)
+states <- read.csv(file = 'data/us-states.csv')
+head(states)
+```
+
+```{r}
+florida <- states[states$state == "Florida",]
+florida
+```
+
+```{r Graph Florida, fig.width = 10, out.width='30%'}
+library(ggplot2)
+fl <- data.frame(florida$date, florida$cases)
+#fl$newDay = as.Date(florida$date, "%Y/%d/%m")
+#fl$cases = florida$cases
+#plot(fl$newDay, fl$cases)
+ggplot(florida, aes(x=date, y=cases)) + geom_point() + theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1))
+```
+
+```{r}
+str(fl)
+#ts(fl, frequency = 365, start=c(2020,1))
+attributes(fl)
+plot(fl)
+# do log transformation
+#fl <- log(fl)
+#plot(fl)
+
+#Decomposition of additive time series
+#decomp <- decompose(fl)
+#decop$figure
+```
+
+```{r}
+library(forecast)
+model <- auto.arima(florida$cases)
+model
+#ARIMA(0,2,0)
+#first value = p = AR order
+#second value = d = degree of differencing
+#third value = q = MA order (moving average order)
+#AIC - Akaike information criterio
+#AICc - AIC with correction
+#BIC - Bayesian information criterion
+attributes(model)
+model$coef
+```
+
+```{r ACF, fig.width = 10, out.width='20%', fig.height=4, out.height=10%}
+#ACF and PACF plots
+#residuals - difference between predicted values and actual values
+acf(model$residuals, main = 'Correlogram')
+pacf(model$residuals, main = 'Partial Correlogram')
+# Ljung-Box test
+Box.test(model$residuals, lag=20, type = 'Ljung-Box')
+#more interested in the p-value, should be > 50% to be significant
+
+#Residual plots
+hist(model$residuals, col = 'red', xlab = 'Error', main = 'Histogram of Residuals', freq = FALSE)
+#show the normal distribution
+lines(density(model$residuals))
+
+#Forecast
+f <- forecast(model,30)
+autoplot(f)
+```
+
+```{r}
+modelFLDeaths <- auto.arima(florida$deaths)
+modelFLDeaths
+attributes(modelFLDeaths)
+modelFLDeaths$coef
+
+acf(modelFLDeaths$residuals, main = 'Correlogram')
+pacf(modelFLDeaths$residuals, main = 'Partial Correlogram')
+# Ljung-Box test
+Box.test(modelFLDeaths$residuals, lag=20, type = 'Ljung-Box')
+#more interested in the p-value, should be > 50% to be significant
+
+#Residual plots
+hist(modelFLDeaths$residuals, col = 'red', xlab = 'Error', main = 'Histogram of Residuals', freq = FALSE)
+#show the normal distribution
+lines(density(modelFLDeaths$residuals))
+
+#Forecast
+f <- forecast(modelFLDeaths,30)
+autoplot(f)
+```
+
+```{r}
+counties <- read.csv('data/us-counties.csv')
+head(counties)
+```
+
