@@ -1,0 +1,69 @@
+---
+title: "Counties"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+counties <- read.csv('data/us-counties.csv')
+head(counties)
+```
+
+```{r}
+miamiDade <- counties[counties$county=="Miami-Dade",]
+miamiDade
+ggplot(miamiDade, aes(x=date, y=cases)) + geom_point() + theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1))
+```
+
+```{r}
+# Miami-Dade forecast
+modelMiamiDade <- auto.arima(miamiDade$cases)
+modelMiamiDade
+library(forecast)
+#residuals - difference between predicted values and actual values
+acf(modelMiamiDade$residuals, main = 'Correlogram')
+pacf(modelMiamiDade$residuals, main = 'Partial Correlogram')
+# Ljung-Box test
+Box.test(modelMiamiDade$residuals, lag=20, type = 'Ljung-Box')
+#more interested in the p-value, should be > 50% to be significant
+
+#Residual plots
+hist(modelMiamiDade$residuals, col = 'red', xlab = 'Error', main = 'Histogram of Residuals', freq = FALSE)
+#show the normal distribution
+lines(density(modelMiamiDade$residuals))
+
+#Forecast
+f <- forecast(modelMiamiDade,30)
+autoplot(f)
+```
+
+```{r}
+# Miami-Dade forecast
+modelMiamiDadeDeaths <- auto.arima(miamiDade$deaths)
+modelMiamiDadeDeaths
+library(forecast)
+#residuals - difference between predicted values and actual values
+acf(modelMiamiDadeDeaths$residuals, main = 'Correlogram')
+pacf(modelMiamiDadeDeaths$residuals, main = 'Partial Correlogram')
+# Ljung-Box test
+Box.test(modelMiamiDadeDeaths$residuals, lag=20, type = 'Ljung-Box')
+#more interested in the p-value, should be > 50% to be significant
+
+#Residual plots
+hist(modelMiamiDadeDeaths$residuals, col = 'red', xlab = 'Error', main = 'Histogram of Residuals', freq = FALSE)
+#show the normal distribution
+lines(density(modelMiamiDadeDeaths$residuals))
+
+#Forecast
+f <- forecast(modelMiamiDadeDeaths,30)
+autoplot(f)
+```
+

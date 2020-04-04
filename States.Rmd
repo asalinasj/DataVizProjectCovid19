@@ -1,5 +1,5 @@
 ---
-title: "Project"
+title: "States"
 output: html_document
 ---
 
@@ -104,7 +104,27 @@ autoplot(f)
 ```
 
 ```{r}
-counties <- read.csv('data/us-counties.csv')
-head(counties)
+newYork <- states[states$state == "New York",]
+newYork
+
+modelNYCases <- auto.arima(newYork$cases)
+modelNYCases
+attributes(modelNYCases)
+modelNYCases$coef
+
+acf(modelNYCases$residuals, main = 'Correlogram')
+pacf(modelNYCases$residuals, main = 'Partial Correlogram')
+# Ljung-Box test
+Box.test(modelNYCases$residuals, lag=20, type = 'Ljung-Box')
+#more interested in the p-value, should be > 50% to be significant
+
+#Residual plots
+hist(modelNYCases$residuals, col = 'red', xlab = 'Error', main = 'Histogram of Residuals', freq = FALSE)
+#show the normal distribution
+lines(density(modelNYCases$residuals))
+
+#Forecast
+f <- forecast(modelNYCases,30)
+autoplot(f)
 ```
 
