@@ -62,7 +62,7 @@ attributes(model)
 model$coef
 ```
 
-```{r ACF, fig.width = 10, out.width='20%', fig.height=4, out.height=10%}
+```{r ACF, fig.width = 12, out.width='30%', fig.height=4, out.height=10%}
 #ACF and PACF plots
 #residuals - difference between predicted values and actual values
 acf(model$residuals, main = 'Correlogram')
