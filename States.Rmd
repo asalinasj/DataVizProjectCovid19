@@ -14,7 +14,9 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r}
+install.packages("forecast")
 library(forecast)
+source("https://raw.githubusercontent.com/iascchen/VisHealth/master/R/calendarHeat.R")
 states <- read.csv(file = 'data/us-states.csv')
 head(states)
 ```
@@ -128,3 +130,7 @@ f <- forecast(modelNYCases,30)
 autoplot(f)
 ```
 
+```{r}
+r2g <- c("#D61818", "#FFAE63", "#FFFFBD", "#B5E384")
+calendarHeat(states$date, states$cases, ncolors = 99, color = "g2r", varname="Number of Covid-19 Cases")
+```
