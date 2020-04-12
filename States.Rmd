@@ -14,7 +14,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r}
-install.packages("forecast")
+#install.packages("forecast")
 library(forecast)
 source("https://raw.githubusercontent.com/iascchen/VisHealth/master/R/calendarHeat.R")
 states <- read.csv(file = 'data/us-states.csv')
@@ -65,6 +65,7 @@ model$coef
 ```
 
 ```{r ACF, fig.width = 12, out.width='30%', fig.height=4, out.height=10%}
+library(forecast)
 #ACF and PACF plots
 #residuals - difference between predicted values and actual values
 acf(model$residuals, main = 'Correlogram')
@@ -80,7 +81,8 @@ lines(density(model$residuals))
 
 #Forecast
 f <- forecast(model,30)
-autoplot(f)
+autoplot(f, xlab="Time(days)", ylab="Number of cases", title="Florida COVID-19 Cases Projections")
+f
 ```
 
 ```{r}
@@ -102,7 +104,8 @@ lines(density(modelFLDeaths$residuals))
 
 #Forecast
 f <- forecast(modelFLDeaths,30)
-autoplot(f)
+autoplot(f, xlab="Time(days)", ylab="Number of deaths", title="Florida COVID-19 Deaths Projections")
+f
 ```
 
 ```{r}
@@ -127,6 +130,7 @@ lines(density(modelNYCases$residuals))
 
 #Forecast
 f <- forecast(modelNYCases,30)
+f
 autoplot(f)
 ```
 
