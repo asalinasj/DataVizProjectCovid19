@@ -5,6 +5,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# Andres Salinas, PantherID: 3239181
+# Luis Averhoff, PantherID: 
 ```
 
 ## R Markdown
